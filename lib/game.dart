@@ -94,15 +94,10 @@ class Game {
       stdout.write('캐릭터의 이름을 입력하세요 : ');
       name = stdin.readLineSync(encoding: utf8);
 
-      if(name == null){
-        print('이름은 빈 문자열이 아니어야 합니다. 다시 입력해 주세요.');
-        continue;
-      }
-
-      if (regexp.hasMatch(name)) {
+      if (name != null && regexp.hasMatch(name)) {
         loop = false;
       } else {
-        print('이름에는 특수문자나 숫자가 포함되지 않아야 합니다. 다시 입력해 주세요.');
+        print('이름은 빈 문자열이거나, 특수문자나 숫자가 포함되지 않아야 합니다. 다시 입력해 주세요.');
       }
     }
 
