@@ -10,6 +10,7 @@ class Game {
   int clearmonstersnum = 0;
 
   // 게임을 시작하는 메서드
+  // 게임 시작시 사용자가 캐릭터의 이름을 입력한다.
   // 캐릭터의 체력이 0이 되면 게임 종료
   // 몬스터를 물리칠 때마다 다음 몬스터와 대결할 건지 선택 (y/n)
   // 설정한 몬스터를 물리치면 게임에서 승리
@@ -31,11 +32,11 @@ class Game {
   // 파일의 데이터는 CSV 형식으로 되어 있다.
   // 예시 ) 캐릭터 -> 체력,공격력,방어력
   //       몬스터 -> 이름,체력,공격력 최대값
-  Future<void> initGame(String name) async {
+  Future<void> initGame() async {
     await readchar(File('save/character.txt'), user);
     await readmons(File('save/monsters.txt'), monsterlist);
-    user.name = name;
     clearmonstersnum = monsterlist.length;
+    inputUserName();
   }
 
   // 캐릭터 파일 읽는 메서드
@@ -49,7 +50,7 @@ class Game {
 
       await for (var line in lines) {
         var linelist = line.split(',').toList();
-       
+
         char.hp = int.parse(linelist[0]);
         char.atk = int.parse(linelist[1]);
         char.dfs = int.parse(linelist[2]);
@@ -81,5 +82,30 @@ class Game {
     }
 
     return mons;
+  }
+
+  // 캐릭터의 이름을 입력받는 메서드
+  void inputUserName() {
+    RegExp regexp = RegExp(r'^[a-zA-Z가-힣]+$');
+    String? name;
+
+    bool loop = true;
+    while (loop) {
+      stdout.write('캐릭터의 이름을 입력하세요 : ');
+      name = stdin.readLineSync(encoding: utf8);
+
+      if(name == null){
+        print('이름은 빈 문자열이 아니어야 합니다. 다시 입력해 주세요.');
+        continue;
+      }
+
+      if (regexp.hasMatch(name)) {
+        loop = false;
+      } else {
+        print('이름에는 특수문자나 숫자가 포함되지 않아야 합니다. 다시 입력해 주세요.');
+      }
+    }
+
+    user.name = name!;
   }
 }

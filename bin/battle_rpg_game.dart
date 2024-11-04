@@ -1,11 +1,13 @@
 import 'package:battle_rpg_game/game.dart';
 
 void main() async {
-  Game a = Game();
+  Game g = Game();
 
-  await a.initGame('User');
+  await g.initGame();
 
-  print(a.user.name);
-  print(a.user.atk);
-  print(a.monsterlist[0].name);
+  print(g.user.name);
+  print(g.user.atk);
+  print(g.monsterlist[0].name);
 }
+
+
