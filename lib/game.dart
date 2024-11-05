@@ -59,6 +59,7 @@ class Game {
     int turnnum = 0;
 
     battleMonster = getRandomMonster();
+    user.resetbuff();
 
     print('\n새로운 몬스터가 나타났습니다!');
     battleMonster.showStatus();
@@ -69,7 +70,8 @@ class Game {
         case BattleTurn.startturn:
           turnnum++;
           print('\n${turnnum}번째 턴입니다!');
-          if (turnnum != 1 && turnnum % 3 == 1) { // 4, 7, 10...
+          if (turnnum != 1 && turnnum % 3 == 1) {
+            // 4, 7, 10...
             battleMonster.increasedfs();
           }
           turn = BattleTurn.characterturn;
@@ -77,18 +79,21 @@ class Game {
         case BattleTurn.characterturn:
           print('\n${user.name}의 턴');
           userselectaction(battleMonster);
+          if (battleMonster.hp <= 0) {
+            break battle;
+          }
           turn = BattleTurn.monsterturn;
           break;
         case BattleTurn.monsterturn:
           print('\n${battleMonster.name}의 턴');
           battleMonster.attackCharacter(user);
+          if (user.hp <= 0) {
+            break battle;
+          }
           turn = BattleTurn.endturn;
           break;
         case BattleTurn.endturn:
           user.decresebuff();
-          if (user.hp <= 0 || battleMonster.hp <= 0) {
-            break battle;
-          }
           showAllStatus(battleMonster);
           turn = BattleTurn.startturn;
           break;

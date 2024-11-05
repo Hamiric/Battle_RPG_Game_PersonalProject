@@ -56,4 +56,9 @@ class Character {
       atk ~/= 2;
     }
   }
+
+  // 버프 초기화 메서드
+  void resetbuff(){
+    buff = false;
+  }
 }
