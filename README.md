@@ -1,8 +1,11 @@
-# Console ShoppingMall
+# Battle RPG GAME
 개인 과제 - 전투 RPG 게임
 
 ## 프로젝트 소개
-아래의 기능들을 가진 콘솔 쇼핑몰 프로그램
+아래의 기능들이 있는 전투 RPG 게임
+
+<img src='Flowchart.png'>
+<br></br>
 
 < 필수 기능 > 
 1. 파일로부터 데이터 읽어오기
@@ -33,17 +36,17 @@
 <summary>📚[ Random함수, 파일입출력, 정규표현식, 함수의 매개변수 ] 에 대한 학습 및 고찰</summary>
 <div markdown="1">
 
-### [TIL - 전투 RPG 게임(Random함수, 파일입출력, 정규표현식](https://hamiric.tistory.com/44)
+### [TIL - 전투 RPG 게임(Random함수, 파일입출력, 정규표현식)](https://hamiric.tistory.com/44)
 
  <br>
 </div>
 </details>
 
 <details>
-<summary>🎨아직 미 작성</summary>
+<summary>🎨자잘한 코드 개선 1차</summary>
 <div markdown="1">
 
-### [TIL - 미작성](https://hamiric.tistory.com/)
+### [TIL - 코드개선 1차](https://hamiric.tistory.com/45)
 
  <br>
 </div>
