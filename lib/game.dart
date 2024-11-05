@@ -37,7 +37,7 @@ class Game {
 
     if(issaveresult()){
       print('결과를 저장합니다.');
-      savefile(user, result);
+      savefile();
     } else{
       print('결과를 저장하지 않았습니다.');
     }
@@ -53,7 +53,7 @@ class Game {
     Monster battleMonster;
     BattleTurn turn = BattleTurn.characterturn;
 
-    battleMonster = getRandomMonster(monsterlist);
+    battleMonster = getRandomMonster();
 
     print('\n새로운 몬스터가 나타났습니다!');
     battleMonster.showStatus();
@@ -86,7 +86,6 @@ class Game {
     if (battleMonster.hp <= 0) {
       print('${battleMonster.name}을(를) 물리쳤습니다!\n');
       clearmonstersnum++;
-      print(battlemonsidx);
       monsterlist.removeAt(battlemonsidx);
 
       if (monsterlist.isEmpty) {
@@ -154,10 +153,10 @@ class Game {
   // 랜덤으로 몬스터를 불러오는 메서드
   // 현재 배틀중인 몬스터의 index 값을 저장
   // Random()을 사용하여 몬스터 리스트에서 랜덤으로 몬스터를 반환
-  Monster getRandomMonster(List<Monster> mons) {
-    int rndmonsidx = Random().nextInt(mons.length);
+  Monster getRandomMonster() {
+    int rndmonsidx = Random().nextInt(monsterlist.length);
     battlemonsidx = rndmonsidx;
-    return mons[rndmonsidx];
+    return monsterlist[rndmonsidx];
   }
 
   // 게임을 시작하기 전 캐릭터와 몬스터를 초기화 하는 비동기 메서드
@@ -165,14 +164,14 @@ class Game {
   // 예시 ) 캐릭터 -> 체력,공격력,방어력
   //       몬스터 -> 이름,체력,공격력 최대값
   Future<void> initGame() async {
-    await readchar(File('save/character.txt'), user);
-    await readmons(File('save/monsters.txt'), monsterlist);
+    await readchar(File('save/character.txt'));
+    await readmons(File('save/monsters.txt'));
     clearmonstersnum = monsterlist.length;
   }
 
   // 캐릭터 파일 읽는 메서드
   // 캐릭터 -> 체력,공격력,방어력
-  Future<Character> readchar(File f, Character char) async {
+  Future<void> readchar(File f) async {
     var charfile = f;
 
     try {
@@ -182,20 +181,18 @@ class Game {
       await for (var line in lines) {
         var linelist = line.split(',').toList();
 
-        char.hp = int.parse(linelist[0]);
-        char.atk = int.parse(linelist[1]);
-        char.dfs = int.parse(linelist[2]);
+        user.hp = int.parse(linelist[0]);
+        user.atk = int.parse(linelist[1]);
+        user.dfs = int.parse(linelist[2]);
       }
     } catch (e) {
       print('캐릭터 파일을 읽는 도중 오류가 발생했습니다. $e');
     }
-
-    return char;
   }
 
   // 몬스터 파일 읽는 메서드
   // 몬스터 -> 이름,체력,공격력 최대값
-  Future<List<Monster>> readmons(File f, List<Monster> mons) async {
+  Future<void> readmons(File f) async {
     var monsfile = f;
 
     try {
@@ -205,14 +202,12 @@ class Game {
       await for (var line in lines) {
         var linelist = line.split(',').toList();
 
-        mons.add(Monster(
+        monsterlist.add(Monster(
             linelist[0], int.parse(linelist[1]), int.parse(linelist[2])));
       }
     } catch (e) {
       print('몬스터 파일을 읽는 도중 오류가 발생했습니다. $e');
     }
-
-    return mons;
   }
 
   // 캐릭터의 이름을 입력받는 메서드
@@ -259,7 +254,7 @@ class Game {
 
   // 파일을 저장하는 메서드
   // 목표 파일이 없을경우, 파일을 새로 만든 후 저장
-  void savefile(Character user, bool result) async {
+  void savefile() async {
     var f = File('save/result.txt');
     String ending;
     if(result){
