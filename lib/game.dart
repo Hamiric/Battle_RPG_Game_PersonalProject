@@ -70,8 +70,8 @@ class Game {
         case BattleTurn.startturn:
           turnnum++;
           print('\n${turnnum}번째 턴입니다!');
+          // 4,7,10...
           if (turnnum != 1 && turnnum % 3 == 1) {
-            // 4, 7, 10...
             battleMonster.increasedfs();
           }
           turn = BattleTurn.characterturn;
