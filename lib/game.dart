@@ -5,6 +5,14 @@ import 'dart:math';
 import 'package:battle_rpg_game/character.dart';
 import 'package:battle_rpg_game/monster.dart';
 
+// 턴 개념
+enum BattleTurn {
+  characterturn,
+  monsterturn,
+  endturn,
+  startturn,
+}
+
 class Game {
   Character user = Character(0, 0, 0);
   List<Monster> monsterlist = [];
@@ -314,12 +322,4 @@ class Game {
       print('30% 확률을 통과해 보너스 체력 10을 얻었습니다! 현재 체력: ${user.hp}');
     }
   }
-}
-
-// 턴 개념
-enum BattleTurn {
-  characterturn,
-  monsterturn,
-  endturn,
-  startturn,
 }
