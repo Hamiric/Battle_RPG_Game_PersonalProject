@@ -3,15 +3,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:battle_rpg_game/character.dart';
+import 'package:battle_rpg_game/enumturn.dart';
 import 'package:battle_rpg_game/monster.dart';
-
-// 턴 개념
-enum BattleTurn {
-  characterturn,
-  monsterturn,
-  endturn,
-  startturn,
-}
 
 class Game {
   Character user = Character(0, 0, 0);
@@ -26,7 +19,6 @@ class Game {
   // 게임 시작시 사용자가 캐릭터의 이름을 입력한다.
   // <도전> 30% 확률로 캐릭터에게 보너스 체력 제공
   // 캐릭터의 체력이 0이 되면 게임 종료
-  // 몬스터를 물리칠 때마다 다음 몬스터와 대결할 건지 선택 (y/n)
   // 설정한 몬스터를 물리치면 게임에서 승리
   void startGame() async {
     await initGame();
@@ -63,6 +55,7 @@ class Game {
   // <도전> 3턴마다 전투중인 몬스터의 방어력 증가 기능 (3턴마다 +2)
   // 처치한 몬스터는 몬스터 리스트에서 삭제
   // 캐릭터의 체력은 대결 간에 누적
+  // 몬스터를 물리칠 때마다 다음 몬스터와 대결할 건지 선택 (y/n)
   void battle() {
     Monster battleMonster;
     BattleTurn turn = BattleTurn.startturn;
