@@ -106,7 +106,7 @@ class Game {
     }
 
     if (battleMonster.hp <= 0) {
-      print('${battleMonster.name}을(를) 물리쳤습니다!');
+      print('${battleMonster.name}을(를) 물리쳤습니다!\n');
       clearmonstersnum++;
       monsterlist.removeAt(battlemonsidx);
 
@@ -147,7 +147,7 @@ class Game {
           user.useitem();
           break;
         default:
-          print('다시 입력해주세요. (1: 공격, 2: 방어)');
+          print('잘못된 입력입니다. 다시 입력해주세요.');
           break;
       }
     }
@@ -160,7 +160,7 @@ class Game {
 
     bool loop = true;
     while (loop) {
-      print('\n다음 몬스터와 싸우시겠습니까? (y/n)');
+      print('다음 몬스터와 싸우시겠습니까? (y/n)');
       input = stdin.readLineSync(encoding: utf8);
 
       switch (input) {
@@ -212,6 +212,8 @@ class Game {
       }
     } catch (e) {
       print('캐릭터 파일을 읽는 도중 오류가 발생했습니다. $e');
+      print('게임을 정상 진행 할 수 없으므로, 프로그램을 종료합니다.');
+      exit(0);
     }
   }
 
@@ -232,6 +234,8 @@ class Game {
       }
     } catch (e) {
       print('몬스터 파일을 읽는 도중 오류가 발생했습니다. $e');
+      print('게임을 정상 진행 할 수 없으므로, 프로그램을 종료합니다.');
+      exit(0);
     }
   }
 
