@@ -27,4 +27,6 @@ class Character {
   void showStatus(){
     print('${name} - 체력 : ${hp}, 공격력 : ${atk}, 방어력 : ${dfs}');
   }
+
+  
 }

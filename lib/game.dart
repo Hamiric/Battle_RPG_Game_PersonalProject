@@ -19,7 +19,9 @@ class Game {
   // 캐릭터의 체력이 0이 되면 게임 종료
   // 몬스터를 물리칠 때마다 다음 몬스터와 대결할 건지 선택 (y/n)
   // 설정한 몬스터를 물리치면 게임에서 승리
-  void startGame() {
+  void startGame() async {
+    await initGame();
+    
     inputUserName();
     print('게임을 시작합니다!');
     user.showStatus();

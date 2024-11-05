@@ -1,8 +1,7 @@
 import 'package:battle_rpg_game/game.dart';
 
-void main() async {
+void main() {
   Game g = Game();
-  await g.initGame();
 
   g.startGame();
 }

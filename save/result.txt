@@ -2,3 +2,4 @@ dev,2,패배
 clout,20,패배
 clout,2,승리
 tester,2,승리
+really,2,패배
