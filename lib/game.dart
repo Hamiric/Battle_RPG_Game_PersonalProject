@@ -55,34 +55,42 @@ class Game {
   // 캐릭터의 체력은 대결 간에 누적
   void battle() {
     Monster battleMonster;
-    BattleTurn turn = BattleTurn.characterturn;
+    BattleTurn turn = BattleTurn.startturn;
+    int turnnum = 0;
 
     battleMonster = getRandomMonster();
 
     print('\n새로운 몬스터가 나타났습니다!');
     battleMonster.showStatus();
-    turn = BattleTurn.characterturn;
 
     battle:
     while (true) {
       switch (turn) {
+        case BattleTurn.startturn:
+          turnnum++;
+          print('\n${turnnum}번째 턴입니다!');
+          if (turnnum != 1 && turnnum % 3 == 1) { // 4, 7, 10...
+            battleMonster.increasedfs();
+          }
+          turn = BattleTurn.characterturn;
+          break;
         case BattleTurn.characterturn:
           print('\n${user.name}의 턴');
           userselectaction(battleMonster);
-          turn = BattleTurn.monstertrun;
+          turn = BattleTurn.monsterturn;
           break;
-        case BattleTurn.monstertrun:
+        case BattleTurn.monsterturn:
           print('\n${battleMonster.name}의 턴');
           battleMonster.attackCharacter(user);
-          turn = BattleTurn.showstatetrun;
+          turn = BattleTurn.endturn;
           break;
-        case BattleTurn.showstatetrun:
+        case BattleTurn.endturn:
           user.decresebuff();
           if (user.hp <= 0 || battleMonster.hp <= 0) {
             break battle;
           }
           showAllStatus(battleMonster);
-          turn = BattleTurn.characterturn;
+          turn = BattleTurn.startturn;
           break;
       }
     }
@@ -300,6 +308,7 @@ class Game {
 // 턴 개념
 enum BattleTurn {
   characterturn,
-  monstertrun,
-  showstatetrun,
+  monsterturn,
+  endturn,
+  startturn,
 }
