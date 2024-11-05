@@ -16,7 +16,7 @@ class Monster {
   void attackCharacter(Character character) {
     int calculatedamege = atk - character.dfs;
     int damege = 0;
-    
+
     if (calculatedamege <= 0) {
       damege = 0;
     } else {

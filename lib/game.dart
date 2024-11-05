@@ -33,10 +33,10 @@ class Game {
     }
 
     if (monsterlist.isEmpty) {
-      print('축하합니다! 모든 몬스터를 물리쳤습니다!\n');
+      print('\n축하합니다! 모든 몬스터를 물리쳤습니다!');
       result = true;
     } else {
-      print('몬스터와의 싸움에서 지고 말았습니다...\n');
+      print('\n몬스터와의 싸움에서 지고 말았습니다...');
     }
 
     if (issaveresult()) {
@@ -61,7 +61,9 @@ class Game {
 
     print('\n새로운 몬스터가 나타났습니다!');
     battleMonster.showStatus();
+    turn = BattleTurn.characterturn;
 
+    battle:
     while (true) {
       switch (turn) {
         case BattleTurn.characterturn:
@@ -72,13 +74,16 @@ class Game {
         case BattleTurn.monstertrun:
           print('\n${battleMonster.name}의 턴');
           battleMonster.attackCharacter(user);
+          turn = BattleTurn.showstatetrun;
+          break;
+        case BattleTurn.showstatetrun:
+          user.decresebuff();
+          if (user.hp <= 0 || battleMonster.hp <= 0) {
+            break battle;
+          }
           showAllStatus(battleMonster);
           turn = BattleTurn.characterturn;
           break;
-      }
-
-      if (user.hp <= 0 || battleMonster.hp <= 0) {
-        break;
       }
     }
 
@@ -88,7 +93,7 @@ class Game {
     }
 
     if (battleMonster.hp <= 0) {
-      print('${battleMonster.name}을(를) 물리쳤습니다!\n');
+      print('${battleMonster.name}을(를) 물리쳤습니다!');
       clearmonstersnum++;
       monsterlist.removeAt(battlemonsidx);
 
@@ -107,13 +112,13 @@ class Game {
   }
 
   // 사용자의 턴에 행동을 선택하는 메서드
-  // 1을 누르면 공격, 2를 누르면 방어를 시전한다
+  // 1을 누르면 공격, 2를 누르면 방어를 시전한다 ,3을 누르면 아이템을 사용하고 턴을 유지한다.
   void userselectaction(Monster battleMonster) {
     String? input;
 
     bool loop = true;
     while (loop) {
-      stdout.write('행동을 선택하세요. (1: 공격, 2: 방어) : ');
+      stdout.write('행동을 선택하세요. (1: 공격, 2: 방어, 3: 아이템사용) : ');
       input = stdin.readLineSync(encoding: utf8);
 
       switch (input) {
@@ -125,8 +130,11 @@ class Game {
           user.defend(battleMonster);
           loop = false;
           break;
+        case '3':
+          user.useitem();
+          break;
         default:
-          print('\n다시 입력해주세요. (1: 공격, 2: 방어)');
+          print('다시 입력해주세요. (1: 공격, 2: 방어)');
           break;
       }
     }
@@ -139,7 +147,7 @@ class Game {
 
     bool loop = true;
     while (loop) {
-      print('다음 몬스터와 싸우시겠습니까? (y/n)');
+      print('\n다음 몬스터와 싸우시겠습니까? (y/n)');
       input = stdin.readLineSync(encoding: utf8);
 
       switch (input) {
@@ -241,7 +249,7 @@ class Game {
 
     bool loop = true;
     while (loop) {
-      stdout.write('결과를 저장하시겠습니까? (y/n) : ');
+      stdout.write('\n결과를 저장하시겠습니까? (y/n) : ');
       input = stdin.readLineSync(encoding: utf8);
 
       switch (input) {
@@ -293,4 +301,5 @@ class Game {
 enum BattleTurn {
   characterturn,
   monstertrun,
+  showstatetrun,
 }
