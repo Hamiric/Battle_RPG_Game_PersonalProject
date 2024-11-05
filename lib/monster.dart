@@ -34,7 +34,7 @@ class Monster {
   }
 
   // 몬스터의 현재 방어력을 2 증가시키는 메서드
-  void increasedfs() {
+  void increaseDfs() {
     dfs += 2;
     print('${name}의 방어력이 증가했습니다! 현재 방어력: ${dfs}');
   }

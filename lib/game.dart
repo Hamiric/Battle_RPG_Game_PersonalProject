@@ -24,7 +24,7 @@ class Game {
     await initGame();
     inputUserName();
 
-    checkextrahealth();
+    checkExtraHealth();
     print('게임을 시작합니다!');
     user.showStatus();
 
@@ -39,9 +39,9 @@ class Game {
       print('\n몬스터와의 싸움에서 지고 말았습니다...');
     }
 
-    if (issaveresult()) {
+    if (isSaveResult()) {
       print('결과를 저장합니다.');
-      savefile();
+      saveFile();
     } else {
       print('결과를 저장하지 않았습니다.');
     }
@@ -51,6 +51,8 @@ class Game {
   // 게임중 사용자는 매 턴마다 행동을 선택할 수 있다 (ex> 공격하기[1], 방어하기[2])
   // 매 턴마다 몬스터는 사용자에게 공격만 수행한다
   // 캐릭터는 몬스터 리스트에 있는 몬스터들 중 랜덤으로 뽑혀서 대결 진행
+  // <도전> 전투 시 캐릭터의 아이템 사용 기능 추가 (일시적 공격력 2배)
+  // <도전> 3턴마다 전투중인 몬스터의 방어력 증가 기능 (3턴마다 +2)
   // 처치한 몬스터는 몬스터 리스트에서 삭제
   // 캐릭터의 체력은 대결 간에 누적
   void battle() {
@@ -59,7 +61,7 @@ class Game {
     int turnnum = 0;
 
     battleMonster = getRandomMonster();
-    user.resetbuff();
+    user.resetBuff();
 
     print('\n새로운 몬스터가 나타났습니다!');
     battleMonster.showStatus();
@@ -72,13 +74,13 @@ class Game {
           print('\n${turnnum}번째 턴입니다!');
           // 4,7,10...
           if (turnnum != 1 && turnnum % 3 == 1) {
-            battleMonster.increasedfs();
+            battleMonster.increaseDfs();
           }
           turn = BattleTurn.characterturn;
           break;
         case BattleTurn.characterturn:
           print('\n${user.name}의 턴');
-          userselectaction(battleMonster);
+          userSelectAction(battleMonster);
           if (battleMonster.hp <= 0) {
             break battle;
           }
@@ -93,7 +95,7 @@ class Game {
           turn = BattleTurn.endturn;
           break;
         case BattleTurn.endturn:
-          user.decresebuff();
+          user.decreseBuff();
           showAllStatus(battleMonster);
           turn = BattleTurn.startturn;
           break;
@@ -113,7 +115,7 @@ class Game {
       if (monsterlist.isEmpty) {
         gameloop = false;
       } else {
-        gameloop = questnextbattle();
+        gameloop = questNextBattle();
       }
     }
   }
@@ -126,7 +128,7 @@ class Game {
 
   // 사용자의 턴에 행동을 선택하는 메서드
   // 1을 누르면 공격, 2를 누르면 방어를 시전한다 ,3을 누르면 아이템을 사용하고 턴을 유지한다.
-  void userselectaction(Monster battleMonster) {
+  void userSelectAction(Monster battleMonster) {
     String? input;
 
     bool loop = true;
@@ -155,7 +157,7 @@ class Game {
 
   // 다음 몬스터와 싸울지 말지 질문을 하는 메서드
   // y는 다음몬스터와 싸우는것이고, n은 싸우지 않는것
-  bool questnextbattle() {
+  bool questNextBattle() {
     String? input;
 
     bool loop = true;
@@ -189,14 +191,14 @@ class Game {
   // 예시 ) 캐릭터 -> 체력,공격력,방어력
   //       몬스터 -> 이름,체력,공격력 최대값
   Future<void> initGame() async {
-    await readchar(File('save/character.txt'));
-    await readmons(File('save/monsters.txt'));
+    await readChar(File('save/character.txt'));
+    await readMons(File('save/monsters.txt'));
     clearmonstersnum = monsterlist.length;
   }
 
   // 캐릭터 파일 읽는 메서드
   // 캐릭터 -> 체력,공격력,방어력
-  Future<void> readchar(File f) async {
+  Future<void> readChar(File f) async {
     var charfile = f;
 
     try {
@@ -219,7 +221,7 @@ class Game {
 
   // 몬스터 파일 읽는 메서드
   // 몬스터 -> 이름,체력,공격력 최대값
-  Future<void> readmons(File f) async {
+  Future<void> readMons(File f) async {
     var monsfile = f;
 
     try {
@@ -261,7 +263,7 @@ class Game {
 
   // 결과를 저장할지 말지 사용자 입력을 받는 메서드
   // y는 저장하기, n는 저장하지 않기
-  bool issaveresult() {
+  bool isSaveResult() {
     String? input;
 
     bool loop = true;
@@ -283,7 +285,7 @@ class Game {
 
   // 파일을 저장하는 메서드
   // 목표 파일이 없을경우, 파일을 새로 만든 후 저장
-  void savefile() async {
+  void saveFile() async {
     var f = File('save/result.txt');
     String ending;
     if (result) {
@@ -304,7 +306,7 @@ class Game {
   }
 
   // 30% 확률로 체력을 얻는 이벤트 메서드
-  void checkextrahealth() {
+  void checkExtraHealth() {
     int rnd = Random().nextInt(10);
 
     if (rnd < 3) {

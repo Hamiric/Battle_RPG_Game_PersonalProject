@@ -50,7 +50,7 @@ class Character {
 
   // 턴이 지날때마다 buff 1 감소
   // 버프가 0이 되면, 버프효과 사라짐
-  void decresebuff() {
+  void decreseBuff() {
     if (buff) {
       buff = false;
       atk ~/= 2;
@@ -58,7 +58,7 @@ class Character {
   }
 
   // 버프 초기화 메서드
-  void resetbuff(){
+  void resetBuff(){
     buff = false;
   }
 }
