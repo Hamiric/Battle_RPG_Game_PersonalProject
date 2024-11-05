@@ -18,8 +18,8 @@ class Character {
   // 방어 메서드
   // 방어시 특정 행동을 수행한다. (예> 상대 몬스터의 공격력 만큼 체력을 얻는다 (회복 아님).)
   void defend(Monster monster){
-    print('${name}이(가) 방어 태세를 취하여 ${dfs}만큼 체력을 얻었습니다.');
-    hp += monster.atk;
+    print('${name}이(가) 방어 태세를 취하여 ${monster.atk}만큼 체력을 얻었습니다.');
+    addHp(monster.atk);
   }
 
   // 상태를 출력하는 메서드
@@ -28,5 +28,8 @@ class Character {
     print('${name} - 체력 : ${hp}, 공격력 : ${atk}, 방어력 : ${dfs}');
   }
 
-  
+  // 체력 회복 메서드
+  void addHp([int heal = 10]){
+    hp += heal;
+  }
 }

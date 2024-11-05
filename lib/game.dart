@@ -16,13 +16,15 @@ class Game {
 
   // 게임을 시작하는 메서드
   // 게임 시작시 사용자가 캐릭터의 이름을 입력한다.
+  // <도전> 30% 확률로 캐릭터에게 보너스 체력 제공
   // 캐릭터의 체력이 0이 되면 게임 종료
   // 몬스터를 물리칠 때마다 다음 몬스터와 대결할 건지 선택 (y/n)
   // 설정한 몬스터를 물리치면 게임에서 승리
   void startGame() async {
     await initGame();
-    
     inputUserName();
+
+    checkextrahealth();
     print('게임을 시작합니다!');
     user.showStatus();
 
@@ -37,10 +39,10 @@ class Game {
       print('몬스터와의 싸움에서 지고 말았습니다...\n');
     }
 
-    if(issaveresult()){
+    if (issaveresult()) {
       print('결과를 저장합니다.');
       savefile();
-    } else{
+    } else {
       print('결과를 저장하지 않았습니다.');
     }
   }
@@ -259,21 +261,31 @@ class Game {
   void savefile() async {
     var f = File('save/result.txt');
     String ending;
-    if(result){
+    if (result) {
       ending = '승리';
-    } else{
+    } else {
       ending = '패배';
     }
 
-    if (await f.exists()){
+    if (await f.exists()) {
       // 정상출력 로그
-    }
-    else {
+    } else {
       // result.txt파일 생성 로그
       f.create();
     }
 
-    f.writeAsString('${user.name},${user.hp},${ending}\n', mode: FileMode.append);
+    f.writeAsString('${user.name},${user.hp},${ending}\n',
+        mode: FileMode.append);
+  }
+
+  // 30% 확률로 체력을 얻는 이벤트 메서드
+  void checkextrahealth() {
+    int rnd = Random().nextInt(10);
+
+    if (rnd < 3) {
+      user.addHp();
+      print('30% 확률을 통과해 보너스 체력 10을 얻었습니다! 현재 체력: ${user.hp}');
+    }
   }
 }
 
