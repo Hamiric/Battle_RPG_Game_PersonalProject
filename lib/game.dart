@@ -3,12 +3,14 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:battle_rpg_game/character.dart';
-import 'package:battle_rpg_game/enumturn.dart';
+import 'package:battle_rpg_game/enum.dart';
+import 'package:battle_rpg_game/buff.dart';
 import 'package:battle_rpg_game/monster.dart';
 
 class Game {
   Character user = Character(0, 0, 0);
   List<Monster> monsterlist = [];
+  List<Buff> eventlist = [];
   int clearmonstersnum = 0;
 
   int battlemonsidx = 0;
@@ -18,6 +20,7 @@ class Game {
   // 게임을 시작하는 메서드
   // 게임 시작시 사용자가 캐릭터의 이름을 입력한다.
   // <도전> 30% 확률로 캐릭터에게 보너스 체력 제공
+  // <도전> 10% 확률로 이벤트 발생
   // 캐릭터의 체력이 0이 되면 게임 종료
   // 설정한 몬스터를 물리치면 게임에서 승리
   void startGame() async {
@@ -29,7 +32,14 @@ class Game {
     user.showStatus();
 
     while (gameloop) {
-      battle();
+      if (Random().nextInt(10) <= 10 && eventlist.isNotEmpty) {
+        int rnd = Random().nextInt(eventlist.length);
+        print('\n이벤트가 발생했습니다.');
+        eventlist[rnd].occurEvent(user);
+        eventlist.removeAt(rnd);
+      } else {
+        battle();
+      }
     }
 
     if (monsterlist.isEmpty) {
@@ -62,7 +72,6 @@ class Game {
     int turnnum = 0;
 
     battleMonster = getRandomMonster();
-    user.resetBuff();
 
     print('\n새로운 몬스터가 나타났습니다!');
     battleMonster.showStatus();
@@ -103,6 +112,12 @@ class Game {
       }
     }
 
+    // 엔드턴을 거치지 않고 배틀을 끝냈을 경우(몬스터를 잡았을 경우)
+    // 버프 한턴 꺼뜨리기
+    if (turn != BattleTurn.endturn) {
+      user.decreseBuff();
+    }
+
     if (user.hp <= 0) {
       print('전투 패배..!');
       gameloop = false;
@@ -134,7 +149,7 @@ class Game {
 
     bool loop = true;
     while (loop) {
-      stdout.write('행동을 선택하세요. (1: 공격, 2: 방어, 3: 아이템사용) : ');
+      stdout.write('행동을 선택하세요. (1: 공격, 2: 방어, 3: 아이템사용, 4: 현재 나의 상태 보기) : ');
       input = stdin.readLineSync(encoding: utf8);
 
       switch (input) {
@@ -148,7 +163,12 @@ class Game {
           break;
         case '3':
           user.useitem();
+          user.showStatus();
           break;
+        case '4':
+          print('현재 상태를 확인합니다!\n');
+          user.showBuffs();
+          user.showStatus();
         default:
           print('잘못된 입력입니다. 다시 입력해주세요.');
           break;
@@ -191,9 +211,11 @@ class Game {
   // 파일의 데이터는 CSV 형식으로 되어 있다.
   // 예시 ) 캐릭터 -> 체력,공격력,방어력
   //       몬스터 -> 이름,체력,공격력 최대값
+  //       이벤트 -> 버프/디버프, 체력증감량, 공격력증감량, 방어력증감량, 지속시간(0일경우 즉효)
   Future<void> initGame() async {
     await readChar(File('save/character.txt'));
     await readMons(File('save/monsters.txt'));
+    await readEvent(File('save/event.txt'));
     clearmonstersnum = monsterlist.length;
   }
 
@@ -237,6 +259,47 @@ class Game {
       }
     } catch (e) {
       print('몬스터 파일을 읽는 도중 오류가 발생했습니다. $e');
+      print('게임을 정상 진행 할 수 없으므로, 프로그램을 종료합니다.');
+      exit(0);
+    }
+  }
+
+  // 이벤트 파일 읽는 메서드
+  // 이벤트 -> 버프/디버프, 체력증감량, 공격력증감량, 방어력증감량, 지속시간(-1일경우 즉효)
+  Future<void> readEvent(File f) async {
+    var eventfile = f;
+
+    try {
+      Stream<String> lines = eventfile
+          .openRead()
+          .transform(utf8.decoder)
+          .transform(LineSplitter());
+
+      await for (var line in lines) {
+        var linelist = line.split(',').toList();
+
+        String type = linelist[0];
+        int hpamount = int.parse(linelist[1]);
+        int atkamount = int.parse(linelist[2]);
+        int dfsamount = int.parse(linelist[3]);
+        int buffduration = int.parse(linelist[4]);
+
+        bool bufftype = true;
+        if (type == 'buff') {
+          bufftype = true;
+        } else if (type == 'debuff') {
+          bufftype = false;
+        }
+
+        eventlist.add(Buff(
+            bufftype,
+            hpamount,
+            atkamount,
+            dfsamount,
+            buffduration));
+      }
+    } catch (e) {
+      print('이벤트 파일을 읽는 도중 오류가 발생했습니다. $e');
       print('게임을 정상 진행 할 수 없으므로, 프로그램을 종료합니다.');
       exit(0);
     }

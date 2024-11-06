@@ -1,3 +1,4 @@
+import 'package:battle_rpg_game/buff.dart';
 import 'package:battle_rpg_game/monster.dart';
 
 class Character {
@@ -6,7 +7,8 @@ class Character {
   late int atk;
   late int dfs;
   bool item = true;
-  bool buff = false;
+
+  List<Buff> buffs = [];
 
   Character(this.hp, this.atk, this.dfs, {this.name = 'aaa'});
 
@@ -38,27 +40,80 @@ class Character {
   // 아이템을 사용하는 메서드
   // 아이템이 사용되면, 버프가 생성되며 버프 효과적용
   void useitem() {
+    Buff itembuff = Buff(true, 0, atk, 0, 1);
     if (item) {
       print('아이템을 사용했습니다! 이번턴동안 공격력이 2배가 됩니다.\n');
+      buffs.add(itembuff);
+      effectBuff(itembuff);
       item = false;
-      atk *= 2;
-      buff = true;
     } else {
       print('소지한 아이템이 없습니다.\n');
     }
   }
 
-  // 턴이 지날때마다 buff 1 감소
+  // 버프 시작시 효과 적용
+  void effectBuff(Buff b) {
+    if (b.bufftype) {
+      if (b.hpamount != 0) {
+        hp += b.hpamount;
+      } else if (b.atkamount != 0) {
+        atk += b.atkamount;
+      } else if (b.dfsamount != 0) {
+        dfs += b.dfsamount;
+      }
+    } else {
+      if (b.hpamount != 0) {
+        hp -= b.hpamount;
+      } else if (b.atkamount != 0) {
+        atk -= b.atkamount;
+      } else if (b.dfsamount != 0) {
+        dfs -= b.dfsamount;
+      }
+    }
+  }
+
+  // 턴이 지날때마다 모든 buff 1 감소
   // 버프가 0이 되면, 버프효과 사라짐
+  // 다만, 체력증감 버프는 즉효성이므로
   void decreseBuff() {
-    if (buff) {
-      buff = false;
-      atk ~/= 2;
+    for (int i = 0; i < buffs.length; i++) {
+      if (buffs[i].buffduration > 0) {
+        buffs[i].buffduration--;
+      }
+
+      if (buffs[i].buffduration <= 0) {
+        if (buffs[i].bufftype) {
+          if (buffs[i].hpamount != 0) {
+            // hp -= buffs[i].hpamount;
+          } else if (buffs[i].atkamount != 0) {
+            atk -= buffs[i].atkamount;
+          } else if (buffs[i].dfsamount != 0) {
+            dfs -= buffs[i].dfsamount;
+          }
+        } else {
+          if (buffs[i].hpamount != 0) {
+            // hp += buffs[i].hpamount;
+          } else if (buffs[i].atkamount != 0) {
+            atk += buffs[i].atkamount;
+          } else if (buffs[i].dfsamount != 0) {
+            dfs += buffs[i].dfsamount;
+          }
+        }
+
+        buffs.removeAt(i);
+      }
+    }
+  }
+
+  // 버프를 보여주는 메서드
+  void showBuffs(){
+    for(int i = 0 ; i < buffs.length ; i ++){
+      buffs[i].showBuff(name);
     }
   }
 
   // 버프 초기화 메서드
-  void resetBuff(){
-    buff = false;
+  void resetBuff() {
+    buffs.clear();
   }
 }
