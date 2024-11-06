@@ -17,6 +17,7 @@ class Monster {
   void attackCharacter(Character character) {
     int realuserdfs = character.dfs;
     if (realuserdfs < 0) realuserdfs = 0;
+    
     int calculatedamege = atk - realuserdfs;
     int damege = 0;
 
