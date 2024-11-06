@@ -157,28 +157,30 @@ class Game {
     bool loop = true;
     while (loop) {
       stdout.write('행동을 선택하세요. (1: 공격, 2: 방어, 3: 아이템사용, 4: 현재 나의 상태 보기) : ');
-      input = stdin.readLineSync(encoding: utf8);
+      try {
+        input = stdin.readLineSync(encoding: utf8);
 
-      switch (input) {
-        case '1':
-          user.attackMonster(battleMonster);
-          loop = false;
-          break;
-        case '2':
-          user.defend(battleMonster);
-          loop = false;
-          break;
-        case '3':
-          user.useitem();
-          user.showStatus();
-          break;
-        case '4':
-          print('현재 상태를 확인합니다!\n');
-          user.showBuffs();
-          user.showStatus();
-        default:
-          print('잘못된 입력입니다. 다시 입력해주세요.');
-          break;
+        switch (input) {
+          case '1':
+            user.attackMonster(battleMonster);
+            loop = false;
+            break;
+          case '2':
+            user.defend(battleMonster);
+            loop = false;
+            break;
+          case '3':
+            user.useitem();
+            break;
+          case '4':
+            print('현재 상태를 확인합니다!\n');
+            user.showBuffs();
+          default:
+            print('잘못된 입력입니다. 다시 입력해주세요.');
+            break;
+        }
+      } catch (e) {
+        print('잘못된 입력입니다. 다시 입력해주세요.');
       }
     }
   }
@@ -191,16 +193,20 @@ class Game {
     bool loop = true;
     while (loop) {
       print('다음 몬스터와 싸우시겠습니까? (y/n)');
-      input = stdin.readLineSync(encoding: utf8);
+      try {
+        input = stdin.readLineSync(encoding: utf8);
 
-      switch (input) {
-        case 'y':
-          return true;
-        case 'n':
-          return false;
-        default:
-          print('y/n 둘중 하나만 입력해주세요.');
-          break;
+        switch (input) {
+          case 'y':
+            return true;
+          case 'n':
+            return false;
+          default:
+            print('y/n 둘중 하나만 입력해주세요.');
+            break;
+        }
+      } catch (e) {
+        print('y/n 둘중 하나만 입력해주세요.');
       }
     }
   }
@@ -254,16 +260,20 @@ class Game {
     bool loop = true;
     while (loop) {
       stdout.write('\n결과를 저장하시겠습니까? (y/n) : ');
-      input = stdin.readLineSync(encoding: utf8);
+      try {
+        input = stdin.readLineSync(encoding: utf8);
 
-      switch (input) {
-        case 'y':
-          return true;
-        case 'n':
-          return false;
-        default:
-          print('y/n 둘중 하나만 입력해주세요.');
-          break;
+        switch (input) {
+          case 'y':
+            return true;
+          case 'n':
+            return false;
+          default:
+            print('y/n 둘중 하나만 입력해주세요.');
+            break;
+        }
+      } catch (e) {
+        print('y/n 둘중 하나만 입력해주세요.');
       }
     }
   }

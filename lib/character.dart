@@ -56,6 +56,7 @@ class Character {
       buffs.add(itembuff);
       effectBuff(itembuff);
       item = false;
+      showStatus();
     } else {
       print('소지한 아이템이 없습니다.\n');
     }
@@ -115,11 +116,12 @@ class Character {
     }
   }
 
-  // 버프를 보여주는 메서드
+  // 버프와 상태를 보여주는 메서드
   void showBuffs() {
     for (int i = 0; i < buffs.length; i++) {
       buffs[i].showBuff(name);
     }
+    showStatus();
   }
 
   // 버프 초기화 메서드
