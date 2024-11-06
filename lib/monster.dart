@@ -18,14 +18,7 @@ class Monster {
     int realuserdfs = character.dfs;
     if (realuserdfs < 0) realuserdfs = 0;
     
-    int calculatedamege = atk - realuserdfs;
-    int damege = 0;
-
-    if (calculatedamege <= 0) {
-      damege = 0;
-    } else {
-      damege = Random().nextInt(atk - realuserdfs);
-    }
+    int damege = atk - realuserdfs;
 
     print('${name}이(가) ${character.name}에게 ${damege}만큼 데미지를 입혔습니다.');
     character.hp -= damege;

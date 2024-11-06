@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:battle_rpg_game/buff.dart';
 import 'package:battle_rpg_game/character.dart';
@@ -41,11 +42,16 @@ class FileModel {
   }
 
   // 몬스터 파일 읽는 메서드
-  // 몬스터 -> 이름,체력,공격력 최대값
-  Future<List<Monster>> readMons() async {
+  // 몬스터의 공격력은 캐릭터의 방어력보다 작을 수 없다
+  // 몬스터 -> 이름,체력,공격력
+  Future<List<Monster>> readMons(Character c) async {
     var monsfile = monsterf;
 
     List<Monster> monsterlist = [];
+
+    String name = '';
+    int hp = 0;
+    int atk = 0;
 
     try {
       Stream<String> lines =
@@ -54,8 +60,14 @@ class FileModel {
       await for (var line in lines) {
         var linelist = line.split(',').toList();
 
+        name = linelist[0];
+        hp = int.parse(linelist[1]);
+        atk = Random().nextInt(int.parse(linelist[2]));
+
+        if(atk < c.dfs) atk = c.dfs;
+
         monsterlist.add(Monster(
-            linelist[0], int.parse(linelist[1]), int.parse(linelist[2])));
+            name, hp, atk));
       }
       return monsterlist;
 

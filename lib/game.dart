@@ -32,6 +32,7 @@ class Game {
 
     checkExtraHealth();
     print('게임을 시작합니다!');
+    print('클리어를 위해서는 ${clearmonstersnum}만큼 몬스터를 물리쳐야 합니다!');
     user.showStatus();
 
     while (gameloop) {
@@ -49,7 +50,7 @@ class Game {
       }
     }
 
-    if (monsterlist.isEmpty) {
+    if (clearmonstersnum == 0) {
       print('\n축하합니다! 모든 몬스터를 물리쳤습니다!');
       result = true;
     } else {
@@ -132,10 +133,10 @@ class Game {
 
     if (battleMonster.hp <= 0) {
       print('${battleMonster.name}을(를) 물리쳤습니다!\n');
-      clearmonstersnum++;
+      clearmonstersnum--;
       monsterlist.removeAt(battlemonsidx);
 
-      if (monsterlist.isEmpty) {
+      if (clearmonstersnum == 0) {
         gameloop = false;
       } else {
         gameloop = questNextBattle();
@@ -227,9 +228,10 @@ class Game {
   //       이벤트 -> 버프/디버프, 체력증감량, 공격력증감량, 방어력증감량, 지속시간(-1일경우 즉효)
   Future<void> initGame() async {
     user = await files.readChar();
-    monsterlist = await files.readMons();
+    monsterlist = await files.readMons(user);
     eventlist = await files.readEvent();
-    clearmonstersnum = monsterlist.length;
+    clearmonstersnum = Random().nextInt(monsterlist.length - 1) +
+        1; // 1 ~ monsterlist.length 사잇값
   }
 
   // 캐릭터의 이름을 입력받는 메서드
@@ -240,12 +242,16 @@ class Game {
     bool loop = true;
     while (loop) {
       stdout.write('캐릭터의 이름을 입력하세요 : ');
-      name = stdin.readLineSync(encoding: utf8);
+      try {
+        name = stdin.readLineSync(encoding: utf8);
 
-      if (name != null && regexp.hasMatch(name)) {
-        loop = false;
-      } else {
-        print('이름은 빈 문자열이거나, 특수문자나 숫자가 포함되지 않아야 합니다. 다시 입력해 주세요.');
+        if (name != null && regexp.hasMatch(name)) {
+          loop = false;
+        } else {
+          print('이름은 빈 문자열이거나, 특수문자나 숫자가 포함되지 않아야 합니다. 다시 입력해 주세요.');
+        }
+      } catch (e) {
+        print('Windows UTF8 입력 오류입니다. 되도록 영어로 입력해주세요..');
       }
     }
 
