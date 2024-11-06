@@ -32,11 +32,15 @@ class Game {
     user.showStatus();
 
     while (gameloop) {
-      if (Random().nextInt(10) <= 10 && eventlist.isNotEmpty) {
+      if (Random().nextInt(10) <= 1 && eventlist.isNotEmpty) {
         int rnd = Random().nextInt(eventlist.length);
         print('\n이벤트가 발생했습니다.');
         eventlist[rnd].occurEvent(user);
         eventlist.removeAt(rnd);
+        if (user.hp <= 0) {
+          print('이벤트로 인해 체력이 0이 되었습니다..');
+          gameloop = false;
+        }
       } else {
         battle();
       }
@@ -291,12 +295,8 @@ class Game {
           bufftype = false;
         }
 
-        eventlist.add(Buff(
-            bufftype,
-            hpamount,
-            atkamount,
-            dfsamount,
-            buffduration));
+        eventlist
+            .add(Buff(bufftype, hpamount, atkamount, dfsamount, buffduration));
       }
     } catch (e) {
       print('이벤트 파일을 읽는 도중 오류가 발생했습니다. $e');
