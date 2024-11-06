@@ -230,8 +230,9 @@ class Game {
     user = await files.readChar();
     monsterlist = await files.readMons(user);
     eventlist = await files.readEvent();
-    clearmonstersnum = Random().nextInt(monsterlist.length - 1) +
-        1; // 1 ~ monsterlist.length 사잇값
+    
+    // 1 ~ monsterlist.length 사잇값
+    clearmonstersnum = Random().nextInt(monsterlist.length - 1) + 1;
   }
 
   // 캐릭터의 이름을 입력받는 메서드
