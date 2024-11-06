@@ -14,9 +14,13 @@ class Character {
 
   // 공격 메서드
   // 몬스터에게 공격을 가하여 피해를 입힌다
+  // 만약 버프등에 의해 atk가 0보다 적을경우, 0의 데미지가 입혀진다.
   void attackMonster(Monster monster) {
-    print('${name}이(가) ${monster.name}에게 ${atk}의 데미지를 입혔습니다.');
-    monster.hp -= atk;
+    int realatk = atk;
+    if (atk < 0) realatk = 0;
+
+    print('${name}이(가) ${monster.name}에게 ${realatk}의 데미지를 입혔습니다.');
+    monster.hp -= realatk;
   }
 
   // 방어 메서드
@@ -28,8 +32,14 @@ class Character {
 
   // 상태를 출력하는 메서드
   // 캐릭터의 현재 체력, 공격력, 방어력을 매턴마다 출력
+  // 만약 버프등에 의해 atk, dfs가 0보다 적을경우, 0이 출력.
   void showStatus() {
-    print('${name} - 체력 : ${hp}, 공격력 : ${atk}, 방어력 : ${dfs}');
+    int realatk = atk;
+    int realdfs = dfs;
+    if (atk < 0) realatk = 0;
+    if (dfs < 0) realdfs = 0;
+
+    print('${name} - 체력 : ${hp}, 공격력 : ${realatk}, 방어력 : ${realdfs}');
   }
 
   // 체력 회복 메서드
@@ -42,7 +52,7 @@ class Character {
   void useitem() {
     Buff itembuff = Buff(true, 0, atk, 0, 1);
     if (item) {
-      print('아이템을 사용했습니다! 이번턴동안 공격력이 2배가 됩니다.\n');
+      print('아이템을 사용했습니다! 이번턴동안 현재 공격력이 2배가 됩니다.\n');
       buffs.add(itembuff);
       effectBuff(itembuff);
       item = false;
@@ -106,8 +116,8 @@ class Character {
   }
 
   // 버프를 보여주는 메서드
-  void showBuffs(){
-    for(int i = 0 ; i < buffs.length ; i ++){
+  void showBuffs() {
+    for (int i = 0; i < buffs.length; i++) {
       buffs[i].showBuff(name);
     }
   }

@@ -13,14 +13,17 @@ class Monster {
   // 공격 메서드
   // 캐릭터에게 공격을 가하며 피해를 입힙니다
   // 캐릭터에게 입히는 데미지는 공격력에서 캐릭터의 방어력을 뺀 값이며, 최소 데미지는 0 이상입니다
+  // 만약 캐릭터의 방어력이 버프등에 의해 0 이하일경우 캐릭터의 dfs는 0으로 간주한다.
   void attackCharacter(Character character) {
-    int calculatedamege = atk - character.dfs;
+    int realuserdfs = character.dfs;
+    if (realuserdfs < 0) realuserdfs = 0;
+    int calculatedamege = atk - realuserdfs;
     int damege = 0;
 
     if (calculatedamege <= 0) {
       damege = 0;
     } else {
-      damege = Random().nextInt(atk - character.dfs);
+      damege = Random().nextInt(atk - realuserdfs);
     }
 
     print('${name}이(가) ${character.name}에게 ${damege}만큼 데미지를 입혔습니다.');
