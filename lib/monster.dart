@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:battle_rpg_game/character.dart';
 
 class Monster {
