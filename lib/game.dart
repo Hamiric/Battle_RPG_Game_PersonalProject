@@ -5,9 +5,12 @@ import 'dart:math';
 import 'package:battle_rpg_game/character.dart';
 import 'package:battle_rpg_game/enum.dart';
 import 'package:battle_rpg_game/buff.dart';
+import 'package:battle_rpg_game/filemodel.dart';
 import 'package:battle_rpg_game/monster.dart';
 
 class Game {
+  FileModel files = FileModel();
+
   Character user = Character(0, 0, 0);
   List<Monster> monsterlist = [];
   List<Buff> eventlist = [];
@@ -55,7 +58,7 @@ class Game {
 
     if (isSaveResult()) {
       print('결과를 저장합니다.');
-      saveFile();
+      files.saveFile(result, user);
     } else {
       print('결과를 저장하지 않았습니다.');
     }
@@ -217,92 +220,10 @@ class Game {
   //       몬스터 -> 이름,체력,공격력 최대값
   //       이벤트 -> 버프/디버프, 체력증감량, 공격력증감량, 방어력증감량, 지속시간(0일경우 즉효)
   Future<void> initGame() async {
-    await readChar(File('save/character.txt'));
-    await readMons(File('save/monsters.txt'));
-    await readEvent(File('save/event.txt'));
+    user = await files.readChar();
+    monsterlist = await files.readMons();
+    eventlist = await files.readEvent();
     clearmonstersnum = monsterlist.length;
-  }
-
-  // 캐릭터 파일 읽는 메서드
-  // 캐릭터 -> 체력,공격력,방어력
-  Future<void> readChar(File f) async {
-    var charfile = f;
-
-    try {
-      Stream<String> lines =
-          charfile.openRead().transform(utf8.decoder).transform(LineSplitter());
-
-      await for (var line in lines) {
-        var linelist = line.split(',').toList();
-
-        user.hp = int.parse(linelist[0]);
-        user.atk = int.parse(linelist[1]);
-        user.dfs = int.parse(linelist[2]);
-      }
-    } catch (e) {
-      print('캐릭터 파일을 읽는 도중 오류가 발생했습니다. $e');
-      print('게임을 정상 진행 할 수 없으므로, 프로그램을 종료합니다.');
-      exit(0);
-    }
-  }
-
-  // 몬스터 파일 읽는 메서드
-  // 몬스터 -> 이름,체력,공격력 최대값
-  Future<void> readMons(File f) async {
-    var monsfile = f;
-
-    try {
-      Stream<String> lines =
-          monsfile.openRead().transform(utf8.decoder).transform(LineSplitter());
-
-      await for (var line in lines) {
-        var linelist = line.split(',').toList();
-
-        monsterlist.add(Monster(
-            linelist[0], int.parse(linelist[1]), int.parse(linelist[2])));
-      }
-    } catch (e) {
-      print('몬스터 파일을 읽는 도중 오류가 발생했습니다. $e');
-      print('게임을 정상 진행 할 수 없으므로, 프로그램을 종료합니다.');
-      exit(0);
-    }
-  }
-
-  // 이벤트 파일 읽는 메서드
-  // 이벤트 -> 버프/디버프, 체력증감량, 공격력증감량, 방어력증감량, 지속시간(-1일경우 즉효)
-  Future<void> readEvent(File f) async {
-    var eventfile = f;
-
-    try {
-      Stream<String> lines = eventfile
-          .openRead()
-          .transform(utf8.decoder)
-          .transform(LineSplitter());
-
-      await for (var line in lines) {
-        var linelist = line.split(',').toList();
-
-        String type = linelist[0];
-        int hpamount = int.parse(linelist[1]);
-        int atkamount = int.parse(linelist[2]);
-        int dfsamount = int.parse(linelist[3]);
-        int buffduration = int.parse(linelist[4]);
-
-        bool bufftype = true;
-        if (type == 'buff') {
-          bufftype = true;
-        } else if (type == 'debuff') {
-          bufftype = false;
-        }
-
-        eventlist
-            .add(Buff(bufftype, hpamount, atkamount, dfsamount, buffduration));
-      }
-    } catch (e) {
-      print('이벤트 파일을 읽는 도중 오류가 발생했습니다. $e');
-      print('게임을 정상 진행 할 수 없으므로, 프로그램을 종료합니다.');
-      exit(0);
-    }
   }
 
   // 캐릭터의 이름을 입력받는 메서드
@@ -345,28 +266,6 @@ class Game {
           break;
       }
     }
-  }
-
-  // 파일을 저장하는 메서드
-  // 목표 파일이 없을경우, 파일을 새로 만든 후 저장
-  void saveFile() async {
-    var f = File('save/result.txt');
-    String ending;
-    if (result) {
-      ending = '승리';
-    } else {
-      ending = '패배';
-    }
-
-    if (await f.exists()) {
-      // 정상출력 로그
-    } else {
-      // result.txt파일 생성 로그
-      f.create();
-    }
-
-    f.writeAsString('${user.name},${user.hp},${ending}\n',
-        mode: FileMode.append);
   }
 
   // 30% 확률로 체력을 얻는 이벤트 메서드

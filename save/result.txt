@@ -4,3 +4,4 @@ clout,2,승리
 tester,2,승리
 really,2,패배
 fine,21,승리
+tester,21,패배
