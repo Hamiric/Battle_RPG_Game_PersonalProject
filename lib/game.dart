@@ -218,7 +218,7 @@ class Game {
   // 파일의 데이터는 CSV 형식으로 되어 있다.
   // 예시 ) 캐릭터 -> 체력,공격력,방어력
   //       몬스터 -> 이름,체력,공격력 최대값
-  //       이벤트 -> 버프/디버프, 체력증감량, 공격력증감량, 방어력증감량, 지속시간(0일경우 즉효)
+  //       이벤트 -> 버프/디버프, 체력증감량, 공격력증감량, 방어력증감량, 지속시간(-1일경우 즉효)
   Future<void> initGame() async {
     user = await files.readChar();
     monsterlist = await files.readMons();
