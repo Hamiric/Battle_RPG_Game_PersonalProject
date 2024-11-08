@@ -85,7 +85,7 @@ class Character {
 
   // 턴이 지날때마다 모든 buff의 지속시간 1 감소
   // 버프가 0이 되면, 버프효과 사라짐
-  // 다만, 체력증감 버프는 즉효성이므로
+  // 다만, 체력증감 버프는 즉효성이므로 감소하지 않음 다만, 리스트에서 없어짐(지속시간이 -1 이므로)
   void decreseBuff() {
     for (int i = 0; i < buffs.length; i++) {
       if (buffs[i].buffduration > 0) {

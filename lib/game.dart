@@ -36,15 +36,8 @@ class Game {
     user.showStatus();
 
     while (gameloop) {
-      if (Random().nextInt(10) <= 1 && eventlist.isNotEmpty) {
-        int rnd = Random().nextInt(eventlist.length);
-        print('\n이벤트가 발생했습니다.');
-        eventlist[rnd].occurEvent(user);
-        eventlist.removeAt(rnd);
-        if (user.hp <= 0) {
-          print('이벤트로 인해 체력이 0이 되었습니다..');
-          gameloop = false;
-        }
+      if (Random().nextInt(10) < 1 && eventlist.isNotEmpty) {
+        event();
       } else {
         battle();
       }
@@ -62,6 +55,68 @@ class Game {
       files.saveFile(result, user);
     } else {
       print('결과를 저장하지 않았습니다.');
+    }
+  }
+
+  // 게임을 시작하기 전 캐릭터와 몬스터를 초기화 하는 비동기 메서드
+  // 파일의 데이터는 CSV 형식으로 되어 있다.
+  // 예시 ) 캐릭터 -> 체력,공격력,방어력
+  //       몬스터 -> 이름,체력,공격력 최대값
+  //       이벤트 -> 버프/디버프, 체력증감량, 공격력증감량, 방어력증감량, 지속시간(-1일경우 즉효)
+  Future<void> initGame() async {
+    user = await files.readChar();
+    monsterlist = await files.readMons(user);
+    eventlist = await files.readEvent();
+
+    // 1 ~ monsterlist.length 사잇값
+    clearmonstersnum = Random().nextInt(monsterlist.length - 1) + 1;
+  }
+
+  // 캐릭터의 이름을 입력받는 메서드
+  void inputUserName() {
+    RegExp regexp = RegExp(r'^[a-zA-Z가-힣]+$');
+    String? name;
+
+    bool loop = true;
+    while (loop) {
+      stdout.write('캐릭터의 이름을 입력하세요 : ');
+      try {
+        name = stdin.readLineSync(encoding: utf8);
+
+        if (name != null && regexp.hasMatch(name)) {
+          loop = false;
+        } else {
+          print('이름은 빈 문자열이거나, 특수문자나 숫자가 포함되지 않아야 합니다. 다시 입력해 주세요.');
+        }
+      } catch (e) {
+        print('Windows UTF8 입력 오류입니다. 되도록 영어로 입력해주세요..');
+      }
+    }
+
+    user.name = name!;
+  }
+
+  // 30% 확률로 체력을 얻는 이벤트 메서드
+  void checkExtraHealth() {
+    int rnd = Random().nextInt(10);
+
+    if (rnd < 3) {
+      user.addHp();
+      print('30% 확률을 통과해 보너스 체력 10을 얻었습니다! 현재 체력: ${user.hp}');
+    }
+  }
+
+  // 이벤트 발생시 메서드
+  // 발생된 이벤트는 더이상 다시 발생하지 않는다.
+  // 이벤트로 인해 체력이 0이 될경우 게임 오버
+  void event() {
+    int rnd = Random().nextInt(eventlist.length);
+    print('\n이벤트가 발생했습니다.');
+    eventlist[rnd].occurEvent(user);
+    eventlist.removeAt(rnd);
+    if (user.hp <= 0) {
+      print('이벤트로 인해 체력이 0이 되었습니다..');
+      gameloop = false;
     }
   }
 
@@ -222,44 +277,6 @@ class Game {
     return monsterlist[rndmonsidx];
   }
 
-  // 게임을 시작하기 전 캐릭터와 몬스터를 초기화 하는 비동기 메서드
-  // 파일의 데이터는 CSV 형식으로 되어 있다.
-  // 예시 ) 캐릭터 -> 체력,공격력,방어력
-  //       몬스터 -> 이름,체력,공격력 최대값
-  //       이벤트 -> 버프/디버프, 체력증감량, 공격력증감량, 방어력증감량, 지속시간(-1일경우 즉효)
-  Future<void> initGame() async {
-    user = await files.readChar();
-    monsterlist = await files.readMons(user);
-    eventlist = await files.readEvent();
-    
-    // 1 ~ monsterlist.length 사잇값
-    clearmonstersnum = Random().nextInt(monsterlist.length - 1) + 1;
-  }
-
-  // 캐릭터의 이름을 입력받는 메서드
-  void inputUserName() {
-    RegExp regexp = RegExp(r'^[a-zA-Z가-힣]+$');
-    String? name;
-
-    bool loop = true;
-    while (loop) {
-      stdout.write('캐릭터의 이름을 입력하세요 : ');
-      try {
-        name = stdin.readLineSync(encoding: utf8);
-
-        if (name != null && regexp.hasMatch(name)) {
-          loop = false;
-        } else {
-          print('이름은 빈 문자열이거나, 특수문자나 숫자가 포함되지 않아야 합니다. 다시 입력해 주세요.');
-        }
-      } catch (e) {
-        print('Windows UTF8 입력 오류입니다. 되도록 영어로 입력해주세요..');
-      }
-    }
-
-    user.name = name!;
-  }
-
   // 결과를 저장할지 말지 사용자 입력을 받는 메서드
   // y는 저장하기, n는 저장하지 않기
   bool isSaveResult() {
@@ -283,16 +300,6 @@ class Game {
       } catch (e) {
         print('y/n 둘중 하나만 입력해주세요.');
       }
-    }
-  }
-
-  // 30% 확률로 체력을 얻는 이벤트 메서드
-  void checkExtraHealth() {
-    int rnd = Random().nextInt(10);
-
-    if (rnd < 3) {
-      user.addHp();
-      print('30% 확률을 통과해 보너스 체력 10을 얻었습니다! 현재 체력: ${user.hp}');
     }
   }
 }
